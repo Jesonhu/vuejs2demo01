@@ -60,6 +60,7 @@
   import shopcart from 'components/shopcart/shopcart';
   import cartcontroll from 'components/cartcontroll/cartcontroll';
   import food from 'components/food/food';
+  import axios from 'axios';
 
   const ERR_OK = 0;
 
@@ -105,18 +106,22 @@
     created() { // dom加载时的操作
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
       // 请求获取goods的数据
-      this.$http.get('/api/goods')
-        .then((res) => {
-          res = res.body;
+      axios.get('/api/goods')
+      .then((res) => {
+        if (res.status === 200) {
+          res = res.data;
           if (res.errno === ERR_OK) {
             this.goods = res.data;
             this.$nextTick(() => { // 保证dom渲染好后
               this._initScroll();
               this._calcullateHeight(); // 计算区间高度组成的数组
             });
-          }
-          ;
-        });
+          };
+        };
+      })
+      .catch(function(err) {
+        console.log(err); // 从数据库获取数据出现问题
+      });
     },
     methods: { // 方法
       _initScroll() {

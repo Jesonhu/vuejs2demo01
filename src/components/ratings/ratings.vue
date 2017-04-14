@@ -57,6 +57,7 @@
   import split from 'components/split/split';
   import ratingselect from 'components/ratingselect/ratingselect';
   import {formatDate} from 'common/js/date';
+  import axios from 'axios';
 
   const ALL = 2;
   const ERR_OK = 0;
@@ -80,17 +81,23 @@
       };
     },
     created() {
-      this.$http.get('/api/ratings').then((res) => {
-        res = res.body;
-        if (res.errno === ERR_OK) {
-          this.ratings = res.data;
-          this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.ratings, {
-              click: true
-            });
-          });
-        };
-      });
+      axios.get('/api/ratings')
+        .then((res) => {
+          if (res.status === 200) {
+            res = res.data;
+            if (res.errno === ERR_OK) {
+              this.ratings = res.data;
+              this.$nextTick(() => {
+                this.scroll = new BScroll(this.$refs.ratings, {
+                  click: true
+                });
+              });
+            }
+          };
+        })
+        .catch(function(err) {
+          console.log(err); // 从数据库获取数据出现问题
+        });
     },
     filters: {
       formatDate(time) {

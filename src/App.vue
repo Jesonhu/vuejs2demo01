@@ -31,6 +31,8 @@
   import header from 'components/header/header.vue'; // 引入header组件
   import {urlParse} from 'common/js/urlParse';
                               // 引入urlParse.js文件 window.loacation.search操作
+  import axios from 'axios';
+
   const ERR_OK = 0;
 
   export default {
@@ -46,11 +48,17 @@
     },
     created() {
       let url = '/api/seller?id=' + this.seller.id;
-      this.$http.get(url).then((response) => {
-        response = response.body;
-        if (response.errno === ERR_OK) {
-          this.seller = Object.assign({}, this.seller, response.data);
-        }
+      axios.get(url)
+        .then((res) => {
+        if (res.status === 200) {
+          res = res.data;
+          if (res.errno === ERR_OK) {
+            this.seller = Object.assign({}, this.seller, res.data);
+          }
+        };
+      })
+      .catch(function(err) {
+          console.log(err); // 从数据库获取数据出现问题
       });
     },
     components: { // 注册header组件

@@ -9,8 +9,6 @@ import ratings from 'components/ratings/ratings';
 import seller from 'components/seller/seller';
 import axios from 'axios';
 
-
-
 // 引用全局styl
 import 'common/stylus/index.styl';
 import 'common/stylus/test.less';
