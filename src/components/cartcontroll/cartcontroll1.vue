@@ -1,14 +1,12 @@
 <template>
+  <!--全部-->
   <div class="cartcontroll">
-    <transition name="move">
-      <div class="cart-decrease" v-show="food.count>0"
-      @click.stop.prevent="decreaseCart">
-        <span class="inner icon-remove_circle_outline"></span>
-      </div>
-    </transition>
+    <div class="cart-decrease" v-show="food.count>0"
+    @click.stop.prevent="decreaseCart" transition="move">
+      <span class="inner icon-remove_circle_outline"></span>
+    </div>
     <div class="cart-count" v-show="food.count>0">{{food.count}}</div>
     <div class="cart-add icon-add_circle" @click.stop.prevent="addCart"></div>
-
   </div>
 </template>
 
@@ -25,7 +23,7 @@
 
     },
     methods: { // 指令方法
-      addCart: function(ev) { // 增加商品到购物车里
+      addCart: function(ev) {
         if (!ev._constructed) { // 去掉触发pc的事件--保证pc移动事件相同
           return false;
         };
@@ -35,11 +33,9 @@
         } else {
           this.food.count++;
         };
-        // this.$dispatch('cart.add', ev.target); 2.0- 已被废除
-        // console.log(event.target); 点击的按钮的dom
-        this.$emit('add', event.target); // 触发当前实例上的事件。附加参数都会传给监听器回调。
+        this.$dispatch('cart.add', ev.target);
       },
-      decreaseCart: function (ev) { // 减少购物车里面商品的数量
+      decreaseCart: function (ev) {
         if (!ev._constructed) {
           return false;
         };
@@ -59,8 +55,10 @@
       line-height: 24px;
       font-size: 24px;
       transition: all 0.4s linear;
-      opacity: 1;
-      transform: translate3d(0,0,0);
+      &.move-transition{
+        opacity: 1;
+        transform: translate3d(0,0,0);
+      }
       .inner{
         display:inline-block;
         padding: 6px;
@@ -68,10 +66,7 @@
         transition:all 0.4s linear;
         transform: rotate(0deg);
       }
-      &.move-enter-active, &.move-leave-active {
-        transition: all 0.4s linear;
-      }
-      &.move-enter, &.move-leave-active{
+      &.move-enter, &.move-leave{
         opacity: 0;
         transform: translate3d(24px,0,0);
         .inner{

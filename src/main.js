@@ -10,6 +10,7 @@ import seller from 'components/seller/seller';
 
 // 引用全局styl
 import 'common/stylus/index.styl';
+import 'common/stylus/test.less';
 
 Vue.use(VueRouter); // 使用vue-router
 Vue.use(VueResource); // 使用vue-resource

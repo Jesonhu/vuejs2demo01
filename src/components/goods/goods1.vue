@@ -1,55 +1,59 @@
 <template>
-  <div class="goods">
-    <!--左侧分类-->
-    <div class="menu-wrapper" v-el:menu-wrapper>
-      <ul>
-        <li v-for="item in goods" class="menu-item"
-            :class="{'current':currentIndex===$index}"
-            @click="slectMenu($index,$event)">
-          <span class="text border-1px">
-            <span class="icon" v-show="item.type>0"
-                  :class="classMap[item.type]"></span>
-            {{item.name}}
-          </span>
-        </li>
-      </ul>
-    </div>
-    <!--右侧商品列表-->
-    <div class="foods-wrapper" v-el:foods-wrapper>
-      <ul>
-        <li v-for="item in goods" class="foot-list food-list-hook">
-          <h2 class="title">{{item.name}}</h2>
-          <ul>
-            <li v-for="food in item.foods" class="foods-item border-1px" @click="selectFood(food,$event)">
+  <!--全内容-->
+  <div>
+    <div class="goods">
+      <!--左侧分类-->
+      <div class="menu-wrapper" ref="menuWrapper">
+        <ul>
+          <li v-for="(item,index) in goods" class="menu-item"
+              :class="{'current':currentIndex===index}"
+              @click="slectMenu(index,$event)">
+            <span class="text border-1px">
+              <span class="icon" v-show="item.type>0"
+                    :class="classMap[item.type]"></span>
+              {{item.name}}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <!--右侧商品列表-->
+      <div class="foods-wrapper" ref="foodsWrapper">
+        <ul>
+          <li v-for="item in goods" class="foot-list food-list-hook" ref="foodList">
+            <h2 class="title">{{item.name}}</h2>
+            <ul>
+              <li v-for="food in item.foods" class="foods-item border-1px" @click="selectFood(food,$event)">
 
-              <div class="icon">
-                <img :src="food.icon" width="57" height="57">
-              </div>
+                <div class="icon">
+                  <img :src="food.icon" width="57" height="57">
+                </div>
 
-              <div class="content">
-                <h3 class="name">{{food.name}}</h3>
-                <p class="desc">{{food.description}}</p>
-                <div class="extra">
-                  <span class="count">月售{{food.sellCount}}</span>
-                  <span>好评率:{{food.rating}}%</span>
+                <div class="content">
+                  <h3 class="name">{{food.name}}</h3>
+                  <p class="desc">{{food.description}}</p>
+                  <div class="extra">
+                    <span class="count">月售{{food.sellCount}}</span>
+                    <span>好评率:{{food.rating}}%</span>
+                  </div>
+                  <div class="price">
+                    <span class="now">￥{{food.price}}</span>
+                    <span v-show="food.oldPrice" class="odd">￥{{food.oldPrice}}</span>
+                  </div>
+                  <div class="cartcontroll-wrapper">
+                    <cart-controll :food="food" ref="food"></cart-controll>
+                  </div>
                 </div>
-                <div class="price">
-                  <span class="now">￥{{food.price}}</span>
-                  <span v-if="food.oldPrice" class="odd">￥{{food.oldPrice}}</span>
-                </div>
-                <div class="cartcontroll-wrapper">
-                  <cart-controll :food="food"></cart-controll>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </li>
-      </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <!--购物车-->
+      <shop-cart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
     </div>
-    <!--购物车-->
-    <shop-cart v-ref:shop-cart :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
+    <!--商品详情-->
+    <food :food="selectedFood" ref="food"></food>
   </div>
-  <food :food="selectedFood" v-ref:food></food>
 </template>
 
 <script type="text/ecmascript-6">
@@ -75,9 +79,8 @@
       };
     },
     computed: { // 计算属性
-      currentIndex() {
+      currentIndex() { // 右侧内容区滚动时左侧对应添加样式
         for (let i = 0; i < this.listHeight.length; i++) {
-          // console.log(this.listHeight);
           let height1 = this.listHeight[i];
           let height2 = this.listHeight[i + 1];
           if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
@@ -100,6 +103,7 @@
     },
     created() { // dom加载时的操作
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+      // 请求获取goods的数据
       this.$http.get('/api/goods')
         .then((res) => {
           res = res.body;
@@ -115,10 +119,10 @@
     },
     methods: { // 方法
       _initScroll() {
-        this.menuScroll = new BScroll(this.$els.menuWrapper, {
+        this.menuScroll = new BScroll(this.$refs.menuWrapper, {
           click: true // 可以点击
         });
-        this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
+        this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
           probeType: 3, // scroll滚动时监听滚动位置
           click: true
         });
@@ -127,8 +131,9 @@
           // console.log(this.scrollY);
         });
       },
-      _calcullateHeight() {
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
+      _calcullateHeight() { // 计算右侧内容各自分区的高度 添加到this.listHeight数组中
+        // let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook');
+        let foodList = this.$refs.foodList; // 获得右侧li的dom集合
         let height = 0;
         this.listHeight.push(height);
         for (let i = 0; i < foodList.length; i++) {
@@ -137,36 +142,31 @@
           this.listHeight.push(height); // 区间高度放到数组里面
         };
       },
-      slectMenu(_index, ev) {
-        if (!ev._constructed) {
+      slectMenu(_index, ev) { // 点击左侧分类添加样式，右侧对应内容滚动到顶部
+        if (!ev._constructed) { // 使用了BS
           return;
         };
-        let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook');
-        let el = foodList[_index];
-        this.foodsScroll.scrollToElement(el, 300);
+        let foodList = this.$refs.foodList;
+        let els = foodList[_index];
+        this.foodsScroll.scrollToElement(els, 300);
       },
       _drop(target) {
         this.$nextTick(() => { // 体验优化，异步执行下落动画
-          this.$refs.shopCart.drop(target); // 访问子组件
+          this.$refs.shopcart.drop(target); // 访问子组件
         });
       },
-      selectFood(food, ev) {
+      selectFood(food, ev) { // 右侧商品内容区点击
         if (!ev._constructed) {
           return;
         };
         this.selectedFood = food;
-        this.$refs.food.show(); // 调用food组件方法
+        // this.$refs.food.show(); // 调用food组件方法
       }
     },
     components: { // 注册组件
-      shopCart: shopcart,
-      cartControll: cartcontroll,
-      food: food
-    },
-    events: {
-      'cart.add'(target) {
-        this._drop(target);
-      }
+      shopCart: shopcart, // 购物车
+      cartControll: cartcontroll, // 增加减少
+      food: food // 商品详情
     }
   };
 </script>

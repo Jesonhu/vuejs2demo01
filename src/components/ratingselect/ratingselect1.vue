@@ -44,18 +44,38 @@
         }
       }
     },
+    data() {
+      return {
+        ratSelectType: this.selectType,
+        ratOnlyContent: this.onlyContent
+      };
+    },
+    watch: {
+      selectType(val) {
+        this.ratSelectType = val;// 新增selectType的watch，监听变更并同步到ratSelectType上
+      },
+      ratSelectType(val) {
+        this.$emit('select', val); // 上面是基础类型只是改变自己的，将自己的变化通过事件select告诉food.vue
+      },
+      onlyContent(val) {
+        this.ratOnlyContent = val;
+      },
+      ratOnlyContent() {
+        this.$emit('toggle');
+      }
+    },
     methods: {
       select(type, ev) { // 选择全部 满意 不满意
         if (!ev._constructed) { // 使用了BS
           return;
         };
-        this.$emit('select', type);
+        this.ratSelectType = type;
       },
       toggleContent(ev) {
         if (!ev._constructed) { // 使用了BS
           return;
         };
-        this.$emit('toggle');
+        this.ratOnlyContent = !this.onlyContent;
       }
     },
     computed: {
