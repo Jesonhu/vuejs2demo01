@@ -121,10 +121,4 @@
         font-size:12px
         display:inline-block
         vertical-align:middle
-
-
-
-
-
-
 </style>

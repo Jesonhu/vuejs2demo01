@@ -7,6 +7,9 @@ import App from './App';
 import goods from 'components/goods/goods';
 import ratings from 'components/ratings/ratings';
 import seller from 'components/seller/seller';
+import axios from 'axios';
+
+
 
 // 引用全局styl
 import 'common/stylus/index.styl';
@@ -14,6 +17,7 @@ import 'common/stylus/test.less';
 
 Vue.use(VueRouter); // 使用vue-router
 Vue.use(VueResource); // 使用vue-resource
+Vue.prototype.$ajax = axios; // 使用axios
 
 // 配置路由
 const routes = [{
