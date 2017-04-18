@@ -157,12 +157,12 @@
         this.foodsScroll.scrollToElement(els, 300);
       },
       // 小球相关
-      addFood(target) {
+      addFood(target) { // 接收cartcontroll.vue点击加号处位置信息
         this._drop(target);
       },
       _drop(target) {
         this.$nextTick(() => { // 体验优化，异步执行下落动画
-          this.$refs.shopcart.drop(target); // 访问子组件
+          this.$refs.shopcart.drop(target); // 访问shopcart组件,将(点击dom元素)位置信息传给shopcart
         });
       },
       // 小球相关结束
@@ -170,8 +170,8 @@
         if (!event._constructed) { // 使用了BS
           return;
         };
-        this.selectedFood = food;
-        this.$refs.food.show();
+        this.selectedFood = food; // goods.vue使用 food.vue时 :food="selectedFood"
+        this.$refs.food.show(); // 调用food.vue show方法
       }
     },
     components: { // 注册组件

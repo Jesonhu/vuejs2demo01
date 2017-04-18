@@ -17,6 +17,8 @@
           <div class="pay">{{payDesc}}</div>
         </div>
       </div>
+
+      <!--小球动画-->
       <div class="ball-container">
         <div v-for="ball in balls">
           <transition name="drop" @before-enter="beforeDrop" @enter="dropping" @after-enter="afterDrop">
@@ -26,6 +28,7 @@
           </transition>
         </div>
       </div>
+
       <transition name="fold">
         <div class="shopcart-list" v-show="listShow" transition="fold">
         <div class="list-header">
@@ -148,35 +151,36 @@
     },
     methods: {
       // 小球相关 开始
+      // 缓动动画 两层实现 .inner水平方向 外层整体垂直方向
+      // 用一个小球，发现动画是有，但是连续点击的流畅度没了，点击即使很快，也会第一个小球动动画执行完再执行第二个小球
       drop(el) { // 取的父goods.vue组件传来的数据el
         for (let i = 0; i < this.balls.length; i++) {
           let ball = this.balls[i];
-          if (!ball.show) {
-            ball.show = true;
-            ball.el = el;
-            this.dropBalls.push(ball);
+          if (!ball.show) { // 当隐藏的时候
+            ball.show = true; // 改变ball数组对象里面show的值
+            ball.el = el; // 将cartcontroll点击的dom元素添加到ball自定义属性el上
+            this.dropBalls.push(ball);// 将ball.show=true小球添加到dropBalls里
             return;
           };
         };
       },
-      addFood(target) {
-        console.log(1);
+      addFood(target) { // 购物车列表点击+也添加效果
         this.drop(target);
       },
-      beforeDrop(el) {
+      beforeDrop(el) { // 将ball.show=true的对象放到点击位置处 el是balls里的每个对象
         let count = this.balls.length;
-        while (count--) {
+        while (count--) { // 小球的长度
           let ball = this.balls[count];
           if (ball.show) {
             let rect = ball.el.getBoundingClientRect();
                   // 用于获得页面中某个元素的左，上，右和下分别相对浏览器视窗的位置
             let x = rect.left - 32;
             let y = -(window.innerHeight - rect.top - 22);
-            // console.log(x);
-            // console.log(y);
+            // 外层 垂直方向
             el.style.display = '';
             el.style.webkitTransform = `translate3d(0,${y}px,0)`;
             el.style.transform = `translate3d(0,${y}px,0)`;
+            // 内层 水平方向
             let inner = el.getElementsByClassName('inner-hook')[0];
             inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
             inner.style.transform = `translate3d(${x}px,0,0)`;
@@ -187,16 +191,20 @@
         /* eslint-disable no-unused-vars */
         let rf = el.offsetHeight;
         this.$nextTick(() => {
+          // 外层整个部分
           el.style.webkitTransform = 'translate3d(0,0,0)';
           el.style.transform = 'translate3d(0,0,0)';
+          // 内层
           let inner = el.getElementsByClassName('inner-hook')[0];
           inner.style.webkitTransform = 'translate3d(0,0,0)';
           inner.style.transform = 'translate3d(0,0,0)';
-          el.addEventListener('transitionend', done);
+          // transitionend 过渡完成后 css3 transition 事件
+          el.addEventListener('transitionend', done); // 告诉vue动画完成了
         });
       },
       afterDrop(el) {
         let ball = this.dropBalls.shift();
+                // New Array.shift() 数组的第一个元素从其中删除，并返回第一个元素的值。
         if (ball) {
           ball.show = false;
           el.style.display = 'none';
@@ -356,15 +364,13 @@
         left:32px;
         bottom:22px;
         z-index: 200;
-        &.drop-transition{
-          transition: all 0.4s cubic-bezier(0.49,-0.29,0.75,0.41);
-          .inner{
-            width:16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: rgb(0,160,220);
-            transition:all 0.4s linear;
-          }
+        transition: all 0.4s cubic-bezier(0.49,-0.29,0.75,0.41);
+        .inner{
+          width:16px;
+          height: 16px;
+          border-radius: 50%;
+          background-color: rgb(0,160,220);
+          transition:all 0.4s linear;
         }
       }
     }
