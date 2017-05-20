@@ -57,10 +57,11 @@
   import split from 'components/split/split';
   import ratingselect from 'components/ratingselect/ratingselect';
   import {formatDate} from 'common/js/date';
-  import axios from 'axios';
+  // import axios from 'axios';
+  import data from '../../../data.json';
 
   const ALL = 2;
-  const ERR_OK = 0;
+  // const ERR_OK = 0;
 
   export default{
     props: {
@@ -81,7 +82,7 @@
       };
     },
     created() {
-      axios.get('/api/ratings')
+      /* axios.get('/api/ratings')
         .then((res) => {
           if (res.status === 200) {
             res = res.data;
@@ -97,7 +98,13 @@
         })
         .catch(function(err) {
           console.log(err); // 从数据库获取数据出现问题
+        }); */
+      this.ratings = data.ratings;
+      this.$nextTick(() => {
+        this.scroll = new BScroll(this.$refs.ratings, {
+          click: true
         });
+      });
     },
     filters: {
       formatDate(time) {

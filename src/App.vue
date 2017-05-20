@@ -31,9 +31,10 @@
   import header from 'components/header/header.vue'; // 引入header组件
   import {urlParse} from 'common/js/urlParse';
                               // 引入urlParse.js文件 window.loacation.search操作
-  import axios from 'axios';
+  // import axios from 'axios';
+  import data from '../data.json';
 
-  const ERR_OK = 0;
+  // const ERR_OK = 0;
 
   export default {
     data() {
@@ -47,11 +48,11 @@
       };
     },
     created() {
-      let url = '/api/seller?id=' + this.seller.id;
-      axios.get(url)
+      // let url = '/api/seller?id=' + this.seller.id;
+      /* axios.get('../data.json')
         .then((res) => {
         if (res.status === 200) {
-          res = res.data;
+          res = res.data.seller;
           if (res.errno === ERR_OK) {
             this.seller = Object.assign({}, this.seller, res.data);
           }
@@ -59,7 +60,8 @@
       })
       .catch(function(err) {
           console.log(err); // 从数据库获取数据出现问题
-      });
+      }); */
+      this.seller = Object.assign({}, this.seller, data.seller);
     },
     components: { // 注册header组件
       'v-header': header

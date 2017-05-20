@@ -37,13 +37,13 @@
         </div>
         <div class="list-conent" ref="listContent">
           <ul>
-            <li class="food border-1px" v-for="food in selectFoods">
-              <span class="name">{{food.name}}</span>
+            <li class="food border-1px" v-for="item in selectFoods">
+              <span class="name">{{item.name}}</span>
               <div class="price">
-                <span>￥{{food.price*food.count}}</span>
+                <span>￥{{item.price*item.count}}</span>
               </div>
               <div class="cartcontroll-wrapper">
-                <cart-controll @add="addFood" :food="food"></cart-controll>
+                <cart-controll @add="addFood" :food="item"></cart-controll>
               </div>
             </li>
           </ul>
@@ -117,20 +117,20 @@
         return count;
       },
       payDesc() { // 判断是否满足配送条件
-        if (this.totalPrice === 0) {
+        if (this.totalPrice === 0) { // 没选择商品时，显示最低起步价
           this.isEnoughPay = false;
           return `￥${this.minPrice}元起送`;
-        } else if (this.totalPrice < this.minPrice) {
+        } else if (this.totalPrice < this.minPrice) { // 选购了商品但是少于起步价，显示还差多少
           let diff = this.minPrice - this.totalPrice;
           this.isEnoughPay = false;
           return `还差￥${diff}元起送`;
-        } else {
+        } else { // 商品总金额不少于起步价，显示商品总金额
           this.isEnoughPay = true;
           return '去结算';
         }
       },
       listShow: function () {
-        if (!this.totalCount) { // 折叠
+        if (!this.totalCount) { // 折叠 没有选择商品到购物车
           this.fold = true;
           return false;
         };
@@ -142,7 +142,7 @@
                 click: true
               });
             } else {
-             this.scroll.refresh();
+              this.scroll.refresh();
             };
           });
         };
@@ -218,8 +218,8 @@
         this.fold = !this.fold;
       },
       empty() { // 清空购物车
-        this.selectFoods.forEach((food) => {
-          food.count = 0;
+        this.selectFoods.forEach((item) => {
+          item.count = 0;
         });
       },
       hideList() { // 购物车商品列表隐藏

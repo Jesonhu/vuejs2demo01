@@ -12,6 +12,8 @@ import axios from 'axios';
 // 引用全局styl
 import 'common/stylus/index.styl';
 
+// 引入一个文件夹的时候 先找文件夹里的index文件
+
 Vue.use(VueRouter); // 使用vue-router
 Vue.use(VueResource); // 使用vue-resource
 Vue.prototype.$ajax = axios; // 使用axios

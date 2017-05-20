@@ -29,13 +29,12 @@
         if (!ev._constructed) { // 去掉触发pc的事件--保证pc移动事件相同
           return false;
         };
-        if (!this.food.count) {
-          // this.food.count = 1; 不生效
-          Vue.set(this.food, 'count', 1); // 此时这个属性变化就能被观测到
+        if (typeof this.food.count === 'undefined') { // 不存在这个属性时
+          Vue.set(this.food, 'count', 1); // 此时这个属性变化就能被观测到 --此方式可以直接往data里或接收的数据中添加属性
+          // this.$set xxx(yy)
         } else {
           this.food.count++;
         };
-        // this.$dispatch('cart.add', ev.target); 2.0- 已被废除
         // console.log(event.target); 点击的按钮的dom
         this.$emit('add', event.target); // 触发当前实例上的事件。附加参数都会传给监听器回调。
       },

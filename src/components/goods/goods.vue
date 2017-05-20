@@ -60,9 +60,10 @@
   import shopcart from 'components/shopcart/shopcart';
   import cartcontroll from 'components/cartcontroll/cartcontroll';
   import food from 'components/food/food';
-  import axios from 'axios';
+  // import axios from 'axios';
+  import data from '../../../data.json';
 
-  const ERR_OK = 0;
+  // const ERR_OK = 0;
 
   export default{
     props: { // 用来接收其他组件的数据
@@ -92,8 +93,9 @@
       selectFoods() { // 计算商品数量是否变化(可以监听到被cartcontroll.vue改变的food)
                       // 因为在使用cartcontroll.vue时传给它的就是food
                       // 将变化结果传递给shopcart.vue( :select-foods="selectFoods")
+        // js 对象引用关系 +-改变数据的属性的时候，这里可以监听到变化
         let foods = [];
-        this.goods.forEach((good) => {
+        this.goods.forEach((good, index) => { // val: goods数组当前项的内容 index: 这个项的索引
           good.foods.forEach((food) => {
             if (food.count) { // 说明此时food已经被添加或减小更改了
               foods.push(food);
@@ -106,7 +108,7 @@
     created() { // dom加载时的操作
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
       // 请求获取goods的数据
-      axios.get('/api/goods')
+      /* axios.get('/api/goods')
       .then((res) => {
         if (res.status === 200) {
           res = res.data;
@@ -121,6 +123,11 @@
       })
       .catch(function(err) {
         console.log(err); // 从数据库获取数据出现问题
+      }); */
+      this.goods = data.goods;
+      this.$nextTick(() => { // 保证dom渲染好后
+        this._initScroll();
+        this._calcullateHeight(); // 计算区间高度组成的数组
       });
     },
     methods: { // 方法
@@ -156,16 +163,20 @@
         let els = foodList[_index];
         this.foodsScroll.scrollToElement(els, 300);
       },
-      // 小球相关
+
+      /**
+       * 小球相关
+       */
+      /* 获取点击处位置 */
       addFood(target) { // 接收cartcontroll.vue点击加号处位置信息
-        this._drop(target);
+        this._drop(target); // <-- xx
       },
       _drop(target) {
         this.$nextTick(() => { // 体验优化，异步执行下落动画
           this.$refs.shopcart.drop(target); // 访问shopcart组件,将(点击dom元素)位置信息传给shopcart
         });
       },
-      // 小球相关结束
+
       selectFood(food, event) { // 点击右侧内容区，跳转到当前商品详情
         if (!event._constructed) { // 使用了BS
           return;
