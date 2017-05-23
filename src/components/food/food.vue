@@ -87,7 +87,7 @@
           this.showFlag = true;
           this.selectType = ALL;
           this.onlyContent = true;
-          this.$nextTick(() => {
+          this.$nextTick(() => { // 当点击进来的时候dom更新完，可以实例化BS
             if (!this.scroll) {
               this.scroll = new BScroll(this.$refs.food, {
                 click: true
