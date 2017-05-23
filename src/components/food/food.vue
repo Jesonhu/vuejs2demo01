@@ -19,7 +19,7 @@
             <span class="odd" v-if="food.oldPrice">￥{{food.oldPrice}}</span>
           </div>
           <div class="cartcontroll-wrapper">
-            <cart-controll :food="food" @add="addFood"></cart-controll>
+            <cart-controll :food="food" @add="addFood" ref="cartcontroll"></cart-controll>
           </div>
           <transition name="fade">
             <div class="buy" v-show="!food.count || food.count===0" @click.stop.prevent="addFirst" transition="fade">
@@ -115,7 +115,11 @@
           }
         },
         addFood(target) {
+          // 派发goods.vue页面使用food组件上绑定的方法
           this.$emit('add', target);
+          
+          // 父组件使用子组件的方法 ***后来添加的内容
+          // this.$refs.cartcontroll.addCart($event);
         },
         // 使用ratingselect组件时传递@select="selectRating" @toggle="toggleContent"
         // ratingsselect.vue自身改变后 $emit这些事件使得子组件ratingselect.vue与父组件food.vue可以互相通信
