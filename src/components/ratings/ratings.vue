@@ -99,6 +99,7 @@
         .catch(function(err) {
           console.log(err); // 从数据库获取数据出现问题
         }); */
+     // 保存评论的对象获取到数据 => 注册了一个$nextTick => 渲染更新dom => 触发$nextTick => BS实例化   
       this.ratings = data.ratings;
       this.$nextTick(() => {
         this.scroll = new BScroll(this.$refs.ratings, {
