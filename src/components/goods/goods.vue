@@ -125,6 +125,7 @@
         console.log(err); // 从数据库获取数据出现问题
       }); */
       this.goods = data.goods;
+      // 有异步请求 要使用$nextTick
       this.$nextTick(() => { // 保证dom渲染好后
         this._initScroll();
         this._calcullateHeight(); // 计算区间高度组成的数组
