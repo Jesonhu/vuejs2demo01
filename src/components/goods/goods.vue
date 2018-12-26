@@ -6,6 +6,7 @@
       <div class="menu-wrapper" ref="menuWrapper">
         <ul>
           <li v-for="(item,index) in goods" class="menu-item"
+              :key="index"
               :class="{'current':currentIndex===index}"
               @click="slectMenu(index,$event)">
             <span class="text border-1px">
@@ -19,10 +20,12 @@
       <!--右侧商品列表-->
       <div class="foods-wrapper" ref="foodsWrapper">
         <ul>
-          <li v-for="item in goods" class="foot-list food-list-hook" ref="foodList">
+          <li v-for="item in goods" :key="item.name" class="foot-list food-list-hook" ref="foodList">
             <h2 class="title">{{item.name}}</h2>
             <ul>
-              <li v-for="food in item.foods" class="foods-item border-1px" @click="selectFood(food,$event)">
+              <li v-for="food in item.foods" class="foods-item border-1px"
+              :key="food.name" 
+              @click="selectFood(food,$event)">
 
                 <div class="icon">
                   <img :src="food.icon" width="57" height="57">
@@ -39,9 +42,11 @@
                     <span class="now">￥{{food.price}}</span>
                     <span v-show="food.oldPrice" class="odd">￥{{food.oldPrice}}</span>
                   </div>
+                  <!-- 商品数量选择 start -->
                   <div class="cartcontroll-wrapper">
                     <cart-controll :food="food" @add="addFood"></cart-controll>
                   </div>
+                  <!-- 商品数量选择 end -->
                 </div>
               </li>
             </ul>
@@ -51,7 +56,10 @@
       <!--底部购物车-->
       <shop-cart ref="shopcart" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
     </div>
+
+    <!-- 商品详情组件 start -->
     <food @add="addFood" :food="selectedFood" ref="food"></food>
+    <!-- 商品详情组件 end -->
   </div>
 </template>
 
@@ -90,10 +98,13 @@
         };
         return 0;
       },
-      selectFoods() { // 计算商品数量是否变化(可以监听到被cartcontroll.vue改变的food)
-                      // 因为在使用cartcontroll.vue时传给它的就是food
-                      // 将变化结果传递给shopcart.vue( :select-foods="selectFoods")
-        // js 对象引用关系 +-改变数据的属性的时候，这里可以监听到变化
+      /**
+       * 计算商品数量是否变化(可以监听到被cartcontroll.vue改变的food).
+       * 因为在使用cartcontroll.vue时传给它的就是food.
+       * 将变化结果传递给shopcart.vue( :select-foods="selectFoods")
+       * js 对象引用关系 +-改变数据的属性的时候，这里可以监听到变化
+       */
+      selectFoods() {
         let foods = [];
         this.goods.forEach((good, index) => { // val: goods数组当前项的内容 index: 这个项的索引
           good.foods.forEach((food) => {
@@ -177,8 +188,13 @@
           this.$refs.shopcart.drop(target); // 访问shopcart组件,将(点击dom元素)位置信息传给shopcart
         });
       },
-
-      selectFood(food, event) { // 点击右侧内容区，跳转到当前商品详情
+      /**
+       * 点击右侧内容区，跳转到当前商品详情.
+       * 
+       * @param {object} food 点击的商品
+       * @param {betterScrollInstance} event
+       */
+      selectFood(food, event) {
         if (!event._constructed) { // 使用了BS
           return;
         };

@@ -35,7 +35,9 @@
           <ratingselect @select="selectRating" @toggle="toggleContent" :selectType="selectType" :onlyContent="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
           <div class="rating-wrapper">
             <ul v-show="food.ratings && food.ratings.length">
-              <li v-for="rating in food.ratings" class="rating-item border-1px" v-show="needShow(rating.rateType,rating.text)">
+              <li v-for="rating in food.ratings"
+              :key="rating.username"
+              class="rating-item border-1px" v-show="needShow(rating.rateType,rating.text)">
                 <div class="user">
                   <span class="name">{{rating.username}}</span>
                   <img :src="rating.avatar" alt="" class="avatar" width="12" height="12">
@@ -83,7 +85,10 @@
         };
       },
       methods: {
-        show() { // 内部组件自己的方法 _xxx
+        /**
+         * 商品详情组件显示方法.
+         */
+        show() {
           this.showFlag = true;
           this.selectType = ALL;
           this.onlyContent = true;
