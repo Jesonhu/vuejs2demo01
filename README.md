@@ -1,6 +1,7 @@
 # vuejs2elm
 
-> vuejs2+webpack elm project
+
+> vuejs2+webpack elm project [静态站点库](https://github.com/Jesonhu/jesonhu.github.io)
 
 ## Build Setup
 
